@@ -19,6 +19,8 @@ db.once("open", function (callback) {
 // 
 
 var Lead = require("../models/lead");
+var Client = require("../models/client");
+var Content = require("../models/content");
 
 app.get("/", (req, res) => {
   res.send([
@@ -29,6 +31,7 @@ app.get("/", (req, res) => {
   ]);
 });
 
+// Start Leads 
 // Fetch all leads
 app.get('/leads', (req, res) => {
   Lead.find({}, 'title description', function (error, leads) {
@@ -101,5 +104,57 @@ app.delete('/leads/:id', (req, res) => {
     })
   })
 })
+// Finish Leads 
+
+// Start Clients
+// Fetch all Clients
+app.get("/clients", (req, res) => {
+  Client.find({}, 'status hostname settings content_id', function(error, clients) {
+    if (error) {
+      console.error(error);
+    }
+    res.send({
+      clients: clients
+    });
+  }).sort({ _id: -1 });
+});
+
+// Fetch single client
+app.get("/client/:id", (req, res) => {
+  var db = req.db;
+  Client.findById(req.params.id, 'status hostname settings content_id', function (error, client) {
+    if (error) {
+      console.error(error);
+    }
+    res.send(client);
+  });
+});
+// Finish Clients 
+
+// Start Contents
+// Fetch all Contents
+app.get("/contents", (req, res) => {
+  Content.find({}, 'lang fields buttons title subtitle title_head_form_2 subtitle_form_2 title_form_2 description_terms terms_conditions', function (error, contents) {
+    if (error) {
+      console.error(error);
+    }
+    res.send({
+      contents: contents
+    });
+  }).sort({ _id: -1 });
+});
+
+// Fetch single content 
+app.get("/content/:id", (req, res) => {
+  var db = req.db;
+  Content.findById(req.params.id, 'lang fields buttons title subtitle title_head_form_2 subtitle_form_2 title_form_2 description_terms terms_conditions', function (error, content) {
+    if (error) {
+      console.error(error);
+    }
+    res.send(content);
+  });
+});
+// Finish Contents
+
 
 app.listen(process.env.PORT || 8084);
